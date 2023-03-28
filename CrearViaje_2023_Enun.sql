@@ -131,6 +131,16 @@ begin
         rollback;
         raise_application_error(-20004, 'Ya existe el viaje');
     end if;
+
+    select modelo into modelo_bus from autocares where m_idAutocar = idAutocar;
+    
+    --Si el modelo de autocar está a null en autocares (no tiene fila hija en modelos) asignamos 25 plazas.
+    --De lo contrario asignamos las plazas declaradas en el modelo.
+    if(modelo_bus is null) then
+        plazas := 25;
+    else
+        select nPlazas into plazas from autocares join modelos on m_idAutocar=idAutocar and modelo = idModelo;
+    end if;
 end;
 /
 
