@@ -83,6 +83,14 @@ commit;
 
 create or replace procedure crearViaje( m_idRecorrido int, m_idAutocar int, m_fecha date, m_conductor varchar) is
 
+--Declarar variables
+num_rec int;
+num_bus int;
+ocupado int;
+duplicado int;
+plazas int;
+modelo_bus autocares.modelo%type;
+
 --Vincular excepciones
 RECORRIDO_INEXISTENTE exception;
 pragma exception_init (RECORRIDO_INEXISTENTE, -20001);
@@ -97,6 +105,7 @@ VIAJE_DUPLICADO exception;
 pragma exception_init (VIAJE_DUPLICADO, -20004);
 
 begin
+
     --Comprobar condiciones. Si alguna no se cumple se hace un rollback y se lanza excepción.
     
     --Comprobar si el recorrido existe.
@@ -107,7 +116,7 @@ begin
         rollback;
         raise_application_error(-20001, 'No existe el recorrido');
     end if;
-
+    
     --Comprobar si el autocar existe.
     select count(*) into num_bus from autocares where idAutocar = m_idAutocar;    
     
@@ -115,7 +124,7 @@ begin
         rollback;
         raise_application_error(-20002, 'No existe el autobus');
     end if;
-
+    
     --Comprobar si el autocar está ocupado.
     select count(*) into ocupado from viajes where fecha = m_fecha and idAutocar = m_idAutocar;
        
@@ -123,7 +132,7 @@ begin
         rollback;
         raise_application_error(-20003, 'Autobus ocupado en esa fecha');
     end if;
-
+    
     --Comprobar si el viaje ya existe.
     select count(*) into duplicado from viajes where fecha = m_fecha and idRecorrido = m_idRecorrido;
     
@@ -131,7 +140,7 @@ begin
         rollback;
         raise_application_error(-20004, 'Ya existe el viaje');
     end if;
-
+    
     --Si todas las condiciones se cumplen se crea el viaje
     
     --Busca el modelo del autocar en el campo modelo de la tabla autocares.
@@ -144,7 +153,7 @@ begin
     else
         select nPlazas into plazas from autocares join modelos on m_idAutocar=idAutocar and modelo = idModelo;
     end if;
-
+    
     --Inserta el viaje.
     insert into viajes values (seq_viajes.nextval, m_idAutocar, m_idRecorrido, m_fecha, plazas, m_conductor);
     
