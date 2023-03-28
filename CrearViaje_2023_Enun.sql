@@ -115,6 +115,14 @@ begin
         rollback;
         raise_application_error(-20002, 'No existe el autobus');
     end if;
+
+    --Comprobar si el autocar está ocupado.
+    select count(*) into ocupado from viajes where fecha = m_fecha and idAutocar = m_idAutocar;
+       
+    if(ocupado > 0) then
+        rollback;
+        raise_application_error(-20003, 'Autobus ocupado en esa fecha');
+    end if;
 end;
 /
 
