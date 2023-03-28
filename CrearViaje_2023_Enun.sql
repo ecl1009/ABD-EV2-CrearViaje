@@ -97,7 +97,16 @@ VIAJE_DUPLICADO exception;
 pragma exception_init (VIAJE_DUPLICADO, -20004);
 
 begin
-    null; -- Retira el null y rellena el procedimiento
+    --Comprobar condiciones. Si alguna no se cumple se hace un rollback y se lanza excepción.
+    
+    --Comprobar si el recorrido existe.
+    select count(*) into num_rec from recorridos where idrecorrido = m_idRecorrido;
+    
+    
+    if(num_rec = 0) then
+        rollback;
+        raise_application_error(-20001, 'No existe el recorrido');
+    end if;
 end;
 /
 
