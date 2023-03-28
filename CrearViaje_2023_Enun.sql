@@ -132,6 +132,9 @@ begin
         raise_application_error(-20004, 'Ya existe el viaje');
     end if;
 
+    --Si todas las condiciones se cumplen se crea el viaje
+    
+    --Busca el modelo del autocar en el campo modelo de la tabla autocares.
     select modelo into modelo_bus from autocares where m_idAutocar = idAutocar;
     
     --Si el modelo de autocar está a null en autocares (no tiene fila hija en modelos) asignamos 25 plazas.
@@ -141,6 +144,18 @@ begin
     else
         select nPlazas into plazas from autocares join modelos on m_idAutocar=idAutocar and modelo = idModelo;
     end if;
+
+    --Inserta el viaje.
+    insert into viajes values (seq_viajes.nextval, m_idAutocar, m_idRecorrido, m_fecha, plazas, m_conductor);
+    
+    --Finaliza la transacción con commit.       
+    commit;
+--Captura las excepciones que puedan producirse.   
+exception
+    when others then
+        rollback;
+        raise;
+        
 end;
 /
 
