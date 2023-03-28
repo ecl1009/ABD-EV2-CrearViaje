@@ -107,6 +107,14 @@ begin
         rollback;
         raise_application_error(-20001, 'No existe el recorrido');
     end if;
+
+    --Comprobar si el autocar existe.
+    select count(*) into num_bus from autocares where idAutocar = m_idAutocar;    
+    
+    if(num_bus = 0) then
+        rollback;
+        raise_application_error(-20002, 'No existe el autobus');
+    end if;
 end;
 /
 
