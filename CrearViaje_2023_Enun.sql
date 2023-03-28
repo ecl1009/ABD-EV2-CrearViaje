@@ -123,6 +123,14 @@ begin
         rollback;
         raise_application_error(-20003, 'Autobus ocupado en esa fecha');
     end if;
+
+    --Comprobar si el viaje ya existe.
+    select count(*) into duplicado from viajes where fecha = m_fecha and idRecorrido = m_idRecorrido;
+    
+    if(duplicado > 0) then
+        rollback;
+        raise_application_error(-20004, 'Ya existe el viaje');
+    end if;
 end;
 /
 
