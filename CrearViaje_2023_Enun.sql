@@ -83,6 +83,19 @@ commit;
 
 create or replace procedure crearViaje( m_idRecorrido int, m_idAutocar int, m_fecha date, m_conductor varchar) is
 
+--Vincular excepciones
+RECORRIDO_INEXISTENTE exception;
+pragma exception_init (RECORRIDO_INEXISTENTE, -20001);
+
+AUTOCAR_INEXISTENTE exception;
+pragma exception_init (AUTOCAR_INEXISTENTE, -20002);
+
+AUTOCAR_OCUPADO exception;
+pragma exception_init (AUTOCAR_OCUPADO, -20003);
+
+VIAJE_DUPLICADO exception;
+pragma exception_init (VIAJE_DUPLICADO, -20004);
+
 begin
     null; -- Retira el null y rellena el procedimiento
 end;
